@@ -58,3 +58,42 @@ func findLongestSubarray(array []string) []string {
 	return array[index : index+maxCount]
 
 }
+
+// leetcode - 2395
+// 和相等的子数组
+func findSubarrays(nums []int) bool {
+
+	m := map[int]bool{}
+
+	for i := 0; i < len(nums)-1; i++ {
+		temp := nums[i] + nums[i+1]
+		if m[temp] {
+			return true
+		} else {
+			m[temp] = true
+		}
+	}
+
+	return false
+}
+
+// leetcode 2367
+// 算术三元组的数目
+func arithmeticTriplets(nums []int, diff int) int {
+
+	m := map[int]bool{}
+
+	for _, num := range nums {
+		m[num] = true
+	}
+
+	res := 0
+	for i := 0; i < len(nums)-2; i++ {
+		num := nums[i]
+		if m[num+diff] && m[num+diff+diff] {
+			res++
+		}
+	}
+
+	return res
+}
