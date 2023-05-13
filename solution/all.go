@@ -1,6 +1,10 @@
 package solution
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+	"strings"
+)
 
 func min(a, b int) int {
 	if a < b {
@@ -201,4 +205,119 @@ func numPairsDivisibleBy60(time []int) int {
 	}
 
 	return ans
+}
+
+// leetcode 1423
+// 可获得的最大点数
+func maxScore(cardPoints []int, k int) int {
+
+	n := len(cardPoints)
+	prefixSum := make([]int, n+1)
+	suffixSum := make([]int, n+1)
+
+	prefixSum[0] = 0
+	suffixSum[0] = 0
+	for i := 0; i < n; i++ {
+
+		prefixSum[i+1] = prefixSum[i] + cardPoints[i]
+		suffixSum[i+1] = suffixSum[i] + cardPoints[n-1-i]
+
+	}
+
+	ans := 0
+	for i := 0; i <= k; i++ {
+		ans = max(ans, suffixSum[i]+prefixSum[k-i])
+	}
+
+	return ans
+
+}
+
+// leetcode 56
+// 合并区间
+func merge(intervals [][]int) [][]int {
+
+	sort.Slice(intervals, func(i, j int) bool {
+		return intervals[i][0] < intervals[j][0]
+	})
+
+	left := intervals[0][0]
+	right := intervals[0][1]
+
+	res := make([][]int, 0)
+	for i := 1; i < len(intervals); i++ {
+		if right < intervals[i][0] {
+			res = append(res, []int{left, right})
+			left = intervals[i][0]
+			right = intervals[i][1]
+		} else if right >= intervals[i][1] {
+			continue
+		} else {
+			right = intervals[i][1]
+		}
+	}
+
+	res = append(res, []int{left, right})
+
+	return res
+
+}
+
+func insert(intervals [][]int, newInterval []int) [][]int {
+
+	intervals = append(intervals, newInterval)
+
+	return merge(intervals)
+}
+
+// leetcode 71
+// 简化路径
+func simplifyPath(path string) string {
+
+	split := strings.Split(path, "/")
+
+	dir := make([]string, 0)
+
+	for _, s := range split {
+		if s == ".." {
+			if len(dir) > 0 {
+				dir = dir[0 : len(dir)-1]
+			}
+		} else if s == "." || s == "" {
+			continue
+		} else {
+			dir = append(dir, s)
+		}
+	}
+
+	return "/" + strings.Join(dir, "/")
+
+}
+
+func setZeroes(matrix [][]int) {
+
+	row := make(map[int]bool)
+	col := make(map[int]bool)
+
+	for i := range matrix {
+		for j := range matrix[i] {
+			if matrix[i][j] == 0 {
+				row[i] = true
+				col[j] = true
+			}
+		}
+	}
+
+	for r := range row {
+		for j := range matrix[r] {
+			matrix[r][j] = 0
+		}
+	}
+
+	for c := range col {
+		for i := range matrix {
+			matrix[i][c] = 0
+		}
+	}
+
 }
