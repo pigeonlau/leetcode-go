@@ -1546,3 +1546,58 @@ func nextGreaterElements(nums []int) []int {
 
 	return res[:n]
 }
+
+func trap(height []int) int {
+
+	n := len(height)
+	stack := make([]int, 0, n)
+	res := 0
+
+	for i := 0; i < n; i++ {
+		if len(stack) == 0 || height[i] <= height[stack[len(stack)-1]] {
+			stack = append(stack, i)
+		} else {
+			for len(stack) > 0 && height[i] > height[stack[len(stack)-1]] {
+				mid := stack[len(stack)-1]
+				stack = stack[:len(stack)-1]
+
+				if len(stack) > 0 {
+					left := stack[len(stack)-1]
+					res += (min(height[left], height[i]) - height[mid]) * (i - left - 1)
+				}
+			}
+
+			stack = append(stack, i)
+		}
+	}
+
+	return res
+}
+
+func largestRectangleArea(heights []int) int {
+
+	n := len(heights)
+	stack := make([]int, 0, n)
+
+	heights = append([]int{0}, heights...)
+	heights = append(heights, 0)
+	stack = append(stack, 0)
+
+	res := 0
+
+	for i := 1; i < len(heights); i++ {
+		if heights[stack[len(stack)-1]] <= heights[i] {
+			stack = append(stack, i)
+		} else {
+			for len(stack) > 0 && heights[i] < heights[stack[len(stack)-1]] {
+				h := heights[stack[len(stack)-1]]
+				stack = stack[:len(stack)-1]
+				w := i - stack[len(stack)-1] - 1
+				res = max(res, h*w)
+			}
+			stack = append(stack, i)
+		}
+	}
+
+	return res
+}
