@@ -1748,3 +1748,57 @@ func maximumEvenSplit(finalSum int64) []int64 {
 
 	return res
 }
+
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func rightSideView(root *TreeNode) []int {
+	if root == nil {
+		return nil
+	}
+	queue := []*TreeNode{root}
+	res := make([]int, 0)
+
+	for len(queue) > 0 {
+		n := len(queue)
+		for i := 0; i < n; i++ {
+			node := queue[0]
+			queue = queue[1:]
+			if node.Left != nil {
+				queue = append(queue, node.Left)
+			}
+			if node.Right != nil {
+				queue = append(queue, node.Right)
+			}
+
+			if i == n-1 {
+				res = append(res, node.Val)
+			}
+		}
+	}
+
+	return res
+}
+func twoSum(numbers []int, target int) []int {
+
+	n := len(numbers)
+	left := 0
+	right := n - 1
+	for left < right {
+		sum := numbers[left] + numbers[right]
+		if sum == target {
+			return []int{left + 1, right + 1}
+		} else if sum > target {
+			right--
+		} else {
+			left++
+		}
+	}
+
+	return nil
+}
