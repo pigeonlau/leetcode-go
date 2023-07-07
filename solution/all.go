@@ -1601,3 +1601,150 @@ func largestRectangleArea(heights []int) int {
 
 	return res
 }
+
+func groupAnagrams(strs []string) [][]string {
+
+	m := make(map[[26]int][]string)
+
+	for _, str := range strs {
+		counts := [26]int{}
+		for _, b := range []byte(str) {
+			counts[b-'a']++
+		}
+		m[counts] = append(m[counts], str)
+	}
+
+	res := make([][]string, 0)
+	for _, v := range m {
+		res = append(res, v)
+	}
+
+	return res
+}
+
+func longestConsecutive(nums []int) int {
+
+	n := len(nums)
+	if n <= 1 {
+		return n
+	}
+
+	set := make(map[int]bool)
+	for _, num := range nums {
+		set[num] = true
+	}
+
+	res := 1
+	for _, num := range nums {
+		if set[num-1] {
+			continue
+		}
+		cur := 1
+		for set[num+1] {
+			num += 1
+			cur++
+		}
+		if res < cur {
+			res = cur
+		}
+	}
+
+	return res
+}
+
+func findAnagrams(s string, p string) []int {
+	n := len(s)
+	if n < len(p) {
+		return nil
+	}
+
+	temp := [26]int{}
+	for _, b := range []byte(p) {
+		temp[b-'a']++
+	}
+
+	window := [26]int{}
+
+	bytes := []byte(s)
+	for i := 0; i < len(p); i++ {
+		window[bytes[i]-'a']++
+	}
+
+	res := make([]int, 0)
+	for i := 0; i < len(s)-len(p); i++ {
+		if window == temp {
+			res = append(res, i)
+		}
+		window[bytes[i]-'a']--
+		window[bytes[i+len(p)]-'a']++
+	}
+
+	if window == temp {
+		res = append(res, len(s)-len(p))
+	}
+
+	return res
+
+}
+
+func subarraySum(nums []int, k int) int {
+	n := len(nums)
+
+	prefix := make([]int, n+1)
+	m := make(map[int][]int)
+	m[0] = []int{0}
+
+	res := 0
+	for i := 1; i <= n; i++ {
+		prefix[i] = prefix[i-1] + nums[i-1]
+		res += len(m[prefix[i]-k])
+
+		if _, ok := m[prefix[i]]; !ok {
+			m[prefix[i]] = make([]int, 0)
+		}
+		m[prefix[i]] = append(m[prefix[i]], i)
+	}
+
+	return res
+}
+
+func rotate(nums []int, k int) {
+
+	n := len(nums)
+	k = k % n
+	if k == 0 {
+		return
+	}
+
+	reverse(nums, 0, n-1)
+	reverse(nums, 0, k-1)
+	reverse(nums, k, n-1)
+}
+
+func reverse(nums []int, start, end int) {
+	for start < end {
+		nums[start], nums[end] = nums[end], nums[start]
+		start++
+		end--
+	}
+}
+
+func maximumEvenSplit(finalSum int64) []int64 {
+	if finalSum%2 != 0 {
+		return nil
+	}
+
+	sum := int64(0)
+	res := make([]int64, 0)
+	for i := int64(2); sum < finalSum; i += 2 {
+		if finalSum >= sum+i {
+			sum += i
+			res = append(res, i)
+		} else {
+			res[len(res)-1] += finalSum - sum
+			sum = finalSum
+		}
+	}
+
+	return res
+}
