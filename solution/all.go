@@ -1802,3 +1802,110 @@ func twoSum(numbers []int, target int) []int {
 
 	return nil
 }
+
+func threeSum(nums []int) [][]int {
+
+	sort.Ints(nums)
+	n := len(nums)
+	res := make([][]int, 0)
+
+	for i := 0; i < n-2; i++ {
+		if nums[i] > 0 {
+			break
+		}
+		if i > 0 && nums[i] == nums[i-1] {
+			continue
+		}
+		k := n - 1
+		for j := i + 1; j < n-1; j++ {
+			if j > i+1 && nums[j] == nums[j-1] {
+				continue
+			}
+			for j < k && nums[i]+nums[j]+nums[k] > 0 {
+				k--
+			}
+			if k == j {
+				break
+			}
+			if nums[i]+nums[j]+nums[k] == 0 {
+				res = append(res, []int{nums[i], nums[j], nums[k]})
+			}
+		}
+
+	}
+
+	return res
+}
+
+func threeSumClosest(nums []int, target int) int {
+
+	sort.Ints(nums)
+	cur := -10000000
+
+	n := len(nums)
+	fmt.Println(nums)
+
+	for i := 0; i < n-2; i++ {
+		if i > 0 && nums[i] == nums[i-1] {
+			continue
+		}
+		k := n - 1
+		if nums[i]+nums[k]+nums[k-1] <= target {
+			cur = closest(cur, nums[i]+nums[k]+nums[k-1], target)
+			continue
+		}
+		if nums[i]+nums[i+1]+nums[i+2] >= target {
+			cur = closest(cur, nums[i]+nums[i+1]+nums[i+2], target)
+			break
+		}
+		for j := i + 1; j < n-1; j++ {
+			if k < j {
+				break
+			}
+
+			if j > i+1 && nums[j] == nums[j-1] {
+				continue
+			}
+			for j < k && nums[i]+nums[j]+nums[k] > target {
+				k--
+			}
+
+			if k == j {
+				cur = closest(cur, nums[i]+nums[j]+nums[k+1], target)
+				fmt.Println(cur, "1", nums[i], nums[j], nums[k+1])
+			} else {
+				cur1 := closest(cur, nums[i]+nums[j]+nums[k], target)
+				if k < n-1 {
+					cur2 := closest(cur, nums[i]+nums[j]+nums[k+1], target)
+					cur = closest(cur1, cur2, target)
+				} else {
+					cur = cur1
+				}
+
+				fmt.Println(cur, "2", nums[i], nums[j], nums[k])
+
+			}
+
+		}
+	}
+
+	return cur
+
+}
+
+func closest(x, y, target int) int {
+	xx := target - x
+	yy := target - y
+	if xx < 0 {
+		xx = -xx
+	}
+	if yy < 0 {
+		yy = -yy
+	}
+
+	if xx < yy {
+		return x
+	}
+
+	return y
+}
