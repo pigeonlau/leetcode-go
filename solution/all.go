@@ -1909,3 +1909,88 @@ func closest(x, y, target int) int {
 
 	return y
 }
+
+/**
+ * Definition for singly-linked list.
+ * type ListNode struct {
+ *     Val int
+ *     Next *ListNode
+ * }
+ */
+func partition(head *ListNode, x int) *ListNode {
+
+	if head == nil {
+		return head
+	}
+
+	more := &ListNode{}
+	moreCur := more
+	less := &ListNode{}
+	lessCur := less
+
+	for head != nil {
+		if head.Val < x {
+			moreCur.Next = head
+			moreCur = moreCur.Next
+		} else {
+			lessCur.Next = head
+			lessCur = lessCur.Next
+		}
+		head = head.Next
+	}
+	lessCur.Next = nil
+
+	moreCur.Next = less.Next
+
+	return more.Next
+
+}
+
+//func maxAlternatingSum(nums []int) int64 {
+//	n := len(nums)
+//	dp := make([][]int, n)
+//	for i := range dp {
+//		dp[i] = make([]int, 4)
+//	}
+//	// 选为偶数
+//	dp[0][0] = nums[0]
+//	//选为奇数
+//	dp[0][1] = 0
+//	//没选,但下一个是偶数
+//	dp[0][2] = 0
+//	// 没选,但下一个是奇数
+//	dp[0][3] = 0
+//
+//	for i := 1; i < n; i++ {
+//		dp[i][0] = nums[i] + max(dp[i-1][1], dp[i-1][2])
+//		dp[i][1] = -nums[i] + max(dp[i-1][0], dp[i-1][3])
+//		dp[i][2] = max(dp[i-1][1], dp[i-1][2])
+//		dp[i][3] = max(dp[i-1][3], dp[i-1][0])
+//	}
+//
+//	res := dp[n-1][0]
+//	for i := 1; i <= 3; i++ {
+//		res = max(res, dp[n-1][i])
+//	}
+//	return int64(res)
+//}
+
+func maxAlternatingSum(nums []int) int64 {
+	n := len(nums)
+	dp := make([][]int, n)
+	for i := range dp {
+		dp[i] = make([]int, 2)
+	}
+	// 选为偶数
+	dp[0][0] = nums[0]
+	//选为奇数
+	dp[0][1] = 0
+
+	for i := 1; i < n; i++ {
+		dp[i][0] = max(dp[i-1][0], dp[i-1][1]+nums[i])
+		dp[i][1] = max(dp[i-1][1], dp[i-1][0]-nums[i])
+
+	}
+
+	return int64(max(dp[n-1][0], dp[n-1][1]))
+}
