@@ -1994,3 +1994,22 @@ func maxAlternatingSum(nums []int) int64 {
 
 	return int64(max(dp[n-1][0], dp[n-1][1]))
 }
+
+func alternateDigitSum(n int) int {
+
+	stack := make([]int, 0)
+
+	for n > 0 {
+		stack = append(stack, n%10)
+		n = n / 10
+	}
+
+	sign := 1
+	res := 0
+	for i := len(stack) - 1; i >= 0; i-- {
+		res += sign * stack[i]
+		sign = -sign
+	}
+
+	return res
+}
