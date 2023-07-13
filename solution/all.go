@@ -2013,3 +2013,103 @@ func alternateDigitSum(n int) int {
 
 	return res
 }
+
+func minFallingPathSum(matrix [][]int) int {
+
+	m := len(matrix)
+	n := len(matrix[0])
+
+	dp := make([][]int, m)
+	for i := range dp {
+		dp[i] = make([]int, n)
+	}
+
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			if i == 0 {
+				dp[i][j] = matrix[i][j]
+				continue
+			}
+
+			if j == 0 {
+				dp[i][j] = min(dp[i-1][j], dp[i-1][j+1]) + matrix[i][j]
+			} else if j == n-1 {
+				dp[i][j] = min(dp[i-1][j], dp[i-1][j-1]) + matrix[i][j]
+			} else {
+				dp[i][j] = min(min(dp[i-1][j], dp[i-1][j-1]), dp[i-1][j+1]) + matrix[i][j]
+			}
+		}
+	}
+
+	res := math.MaxInt32
+	for j := 0; j < n; j++ {
+		res = min(res, dp[m-1][j])
+	}
+
+	return res
+}
+
+var rand7 func() int
+
+func rand10() int {
+	two := rand7()
+	for two == 7 {
+		two = rand7()
+	}
+	five := rand7()
+	for five > 5 {
+		five = rand7()
+	}
+
+	if two%2 == 1 {
+		return five
+	}
+	return five + 5
+}
+
+var weight []int
+
+func getKth(lo int, hi int, k int) int {
+	if lo == hi {
+		return lo
+	}
+	weight = make([]int, hi+1)
+	weight[1] = 0
+	weight[2] = 1
+	arr := make([]int, hi-lo+1)
+	for i := lo; i <= hi; i++ {
+		getWeight(i)
+		arr[i-lo] = i
+	}
+
+	sort.Slice(arr, func(i, j int) bool {
+		if weight[arr[i]] < weight[arr[j]] {
+			return true
+		} else if weight[arr[i]] > weight[arr[j]] {
+			return false
+		} else {
+			return arr[i] < arr[j]
+		}
+	})
+
+	return arr[k-1]
+
+}
+
+func getWeight(num int) int {
+	if num == 1 {
+		return 0
+	}
+	time := 0
+	n := num
+	for n != 1 {
+		time++
+		if n%2 == 0 {
+			n = n / 2
+		} else {
+			n = 3*n + 1
+		}
+	}
+	weight[num] = time
+	return weight[num]
+}
