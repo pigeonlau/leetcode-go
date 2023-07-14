@@ -2113,3 +2113,83 @@ func getWeight(num int) int {
 	weight[num] = time
 	return weight[num]
 }
+
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+var move int
+
+func distributeCoins(root *TreeNode) int {
+
+	move = 0
+
+	countAndSum(root)
+	return move
+}
+
+func countAndSum(root *TreeNode) (int, int) {
+	if root == nil {
+		return 0, 0
+	}
+
+	l1, l2 := countAndSum(root.Left)
+	r1, r2 := countAndSum(root.Right)
+	move += abs(l2-l1) + abs(r2-r1)
+	return l1 + r1 + 1, l2 + r2 + root.Val
+}
+
+func abs(n int) int {
+	if n < 0 {
+		return -n
+	}
+	return n
+}
+
+func fourSum(nums []int, target int) [][]int {
+
+	sort.Ints(nums)
+	n := len(nums)
+
+	res := make([][]int, 0)
+	for i := 0; i < n-3; i++ {
+		if i > 0 && nums[i] == nums[i-1] {
+			continue
+		}
+		l := n - 1
+
+		for ; l >= i+3; l-- {
+			if l < n-1 && nums[l] == nums[l+1] {
+				continue
+			}
+			tar := target - nums[i] - nums[l]
+			j := i + 1
+			k := l - 1
+			for j < k {
+				s := nums[j] + nums[k]
+				if s == tar {
+					res = append(res, []int{nums[i], nums[j], nums[k], nums[l]})
+					for j < k && nums[j] == nums[j+1] {
+						j++
+					}
+					j++
+					for j < k && nums[k] == nums[k-1] {
+						k--
+					}
+					k--
+				} else if s > tar {
+					k--
+				} else {
+					j++
+				}
+			}
+		}
+
+	}
+
+	return res
+}
